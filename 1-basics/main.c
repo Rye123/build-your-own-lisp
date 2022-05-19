@@ -12,7 +12,7 @@ static char buffer[BUFFER_SIZE];
 char* readline(char* prompt) {
 	fputs(prompt, stdout);
 	fgets(buffer, BUFFER_SIZE, stdin);
-	char* input = malloc(sizeof buffer);
+	char* input = malloc(strlen(buffer));
 	strcpy(input, buffer);
 	return input;
 }
