@@ -1,4 +1,4 @@
-# 1-basics
+# 2-parsing
 
 This source file contains content from Lessons 5 to 6 of the Build Your Own Lisp book. The lessons covered parsing using the given library, this source file includes attempts at the challenges at the end of the lesson like recognising operators in textual format, and recognising decimal numbers with regular expressions.
 
