@@ -1,9 +1,42 @@
 #include "main.h"
 
-int calc_mpc_result(mpc_result_t* r)
+NumStack* numStack;
+OpStack* opStack;
+
+long eval_op(char* operator, long result, long nextResult)
 {
-	
+	if (!strcmp(operator, "+"))
+		return result + nextResult;
+	else if(!strcmp(operator, "-"))
+		return result - nextResult;
+	else if(!strcmp(operator, "*"))
+		return result * nextResult;
+	else if(!strcmp(operator, "/"))
+		return result / nextResult;
+	else if(!strcmp(operator, "%"))
+		return result % nextResult;
 	return 0;
+}
+
+long calc_mpc_result(mpc_ast_t* tree)
+{
+	// if number, add it to the number stack
+	if (strstr(tree->tag, "number"))
+		return atoi(tree->contents);
+	// otherwise, if it is an expression, it is also not a number
+	// first child is the opening bracket
+	char* operator = tree->children[1]->contents;
+	
+	long result = calc_mpc_result(tree->children[2]);
+	// keep looping until the next child is not an expression (i.e. closed bracket)
+	int i = 3;
+	while(strstr(tree->children[i]->tag, "expression")) {
+		long nextResult = calc_mpc_result(tree->children[i]);
+		result = eval_op(operator, result, nextResult);
+		i++;
+	}
+
+	return result;
 }
 
 /*void testStack()
@@ -17,6 +50,9 @@ int calc_mpc_result(mpc_result_t* r)
 
 int main(int argc, char** argv) 
 {
+	// Initialise stacks
+	
+
 	// Define Parsers
 	mpc_parser_t* Number     = mpc_new("number");
 	mpc_parser_t* Operator   = mpc_new("operator");
@@ -48,7 +84,8 @@ int main(int argc, char** argv)
 		mpc_result_t r;
 		
 		if (mpc_parse("<stdin>", input, Lispy, &r)) {
-			mpc_ast_print(r.output);
+			//mpc_ast_print(r.output);
+			printf("%li\n", calc_mpc_result(r.output));
 			mpc_ast_delete(r.output);
 		} else {
 			mpc_err_print(r.error);
